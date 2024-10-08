@@ -21,7 +21,7 @@ class DownloadActivity  : AppCompatActivity() {
             binding?.downloadProgress?.setProgress(100)
             binding?.downloadProgress?.setVisibility(View.VISIBLE)
             binding?.buttonStart?.setVisibility(View.VISIBLE)
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, Navigation.getMainActivity())
             startActivity(intent)
             finish()
         }
@@ -34,7 +34,7 @@ class DownloadActivity  : AppCompatActivity() {
     }
 
     fun startMain(view: View) {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, Navigation.getMainActivity())
         startActivity(intent)
         finish()
     }

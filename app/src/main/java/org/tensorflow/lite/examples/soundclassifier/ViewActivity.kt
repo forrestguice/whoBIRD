@@ -90,22 +90,7 @@ class ViewActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
 
-        binding.bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.action_mic -> {
-                    intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.action_about -> {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whobird")))
-                }
-                R.id.action_settings -> {
-                    intent = Intent(this, SettingsActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-            true
-        }
+        binding.bottomNavigationView.setOnItemSelectedListener(Navigation.getOnItemSelectedListener(this));
         loadLabels(this)
         loadAssetList(this)
         loadEbirdList(this)

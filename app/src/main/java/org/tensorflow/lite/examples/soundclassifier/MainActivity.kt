@@ -77,22 +77,7 @@ class MainActivity : AppCompatActivity() {
         binding.fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_24dp))
       }
     }
-    binding.bottomNavigationView.setOnItemSelectedListener { item ->
-      when (item.itemId) {
-        R.id.action_view -> {
-          intent = Intent(this, ViewActivity::class.java)
-          startActivity(intent)
-        }
-        R.id.action_about -> {
-          startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whobird")))
-        }
-        R.id.action_settings -> {
-          intent = Intent(this, SettingsActivity::class.java)
-          startActivity(intent)
-        }
-      }
-      true
-    }
+    binding.bottomNavigationView.setOnItemSelectedListener(Navigation.getOnItemSelectedListener(this))
 
     val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
     val isShowImagesActive = sharedPref.getBoolean("main_show_images", false)

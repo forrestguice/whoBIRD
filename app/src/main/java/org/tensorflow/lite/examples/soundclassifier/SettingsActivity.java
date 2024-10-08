@@ -31,21 +31,7 @@ Context mContext;
                     .commit();
         }
         BottomNavigationView navigationView = findViewById(R.id.bottomNavigationView);
-        navigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId()==R.id.action_about){
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whobird")));
-                } else if (item.getItemId()==R.id.action_mic){
-                    Intent intent = new Intent(mContext, MainActivity.class);
-                    startActivity(intent);
-                } else if (item.getItemId()==R.id.action_view){
-                    Intent intent = new Intent(mContext, ViewActivity.class);
-                    startActivity(intent);
-                }
-                return true;
-            }
-        });
+        navigationView.setOnItemSelectedListener(Navigation.getOnItemSelectedListener(this));
 
     }
 
