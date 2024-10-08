@@ -29,11 +29,13 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -149,7 +151,21 @@ public class BirdServiceActivity extends AppCompatActivity
         binding.text2.setText("");
         binding.gps.setText(getString(R.string.latitude)+": --.-- / " + getString(R.string.longitude) + ": --.--" );   // TODO: i18n
 
-        // TODO: set aspect ratio for webview and icon
+        float width;
+        if (Build.VERSION.SDK_INT >= 30) {
+            width = getWindowManager().getCurrentWindowMetrics().getBounds().width();
+        } else {
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            width = metrics.widthPixels;
+        }
+
+        ViewGroup.LayoutParams params0 = binding.webview.getLayoutParams();
+        params0.height = (int)(width / 1.8f);
+
+        ViewGroup.LayoutParams params1 = binding.icon.getLayoutParams();
+        params1.height = (int)(width / 1.8f);
+        
         binding.webview.setWebViewClient(new MlWebViewClient(this));
         binding.webview.getSettings().setDomStorageEnabled(true);
         binding.webview.getSettings().setJavaScriptEnabled(true);
