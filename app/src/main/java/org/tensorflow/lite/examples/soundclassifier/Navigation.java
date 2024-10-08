@@ -1,13 +1,16 @@
 package org.tensorflow.lite.examples.soundclassifier;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationBarView;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 public class Navigation
 {
@@ -21,7 +24,7 @@ public class Navigation
                     activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whobird")));
 
                 } else if (item.getItemId() == R.id.action_mic) {
-                    Intent intent = new Intent(activity, getMainActivity());
+                    Intent intent = new Intent(activity, getMainActivity(activity));
                     activity.startActivity(intent);
 
                 } else if (item.getItemId() == R.id.action_view) {
@@ -37,8 +40,9 @@ public class Navigation
         };
     }
 
-    public static Class getMainActivity() {
-        return BirdServiceActivity.class;
+    public static Class getMainActivity(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return (prefs.getBoolean("use_foreground_service", true) ? BirdServiceActivity.class : MainActivity.class);
     }
 
     public static void shareApp(Activity activity)

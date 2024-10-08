@@ -5,6 +5,11 @@
     android:key="reset"
     android:layout="@layout/reset_button"/>
 
+<CheckBoxPreference
+    android:key="use_foreground_service"
+    app:title="@string/settings_background"
+    app:defaultValue="true" />
+
 <ListPreference
     app:defaultValue="9"
     app:entries="@array/audio_source_entries"

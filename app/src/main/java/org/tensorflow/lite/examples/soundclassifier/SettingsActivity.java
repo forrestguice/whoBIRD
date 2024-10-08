@@ -51,6 +51,7 @@ Context mContext;
             if (reset != null) reset.setOnPreferenceClickListener(preference -> {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
+                sharedPreferences.edit().remove("use_foreground_service").apply();
                 sharedPreferences.edit().remove("audio_source").apply();
                 sharedPreferences.edit().remove("high_pass").apply();
                 sharedPreferences.edit().remove("model_threshold").apply();
