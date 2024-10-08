@@ -45,6 +45,10 @@
             android:exported="false">
         </activity>
 
+        <activity
+            android:name=".BirdServiceActivity"
+            android:exported="false" />
+
         <service
             android:name=".BirdService"
             android:exported="false"

@@ -38,7 +38,7 @@ public class Navigation
     }
 
     public static Class getMainActivity() {
-        return MainActivity.class;
+        return BirdServiceActivity.class;
     }
 
     public static void shareApp(Activity activity)
