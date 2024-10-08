@@ -23,4 +23,13 @@
     <string name="source_microphone">Microphone</string>
     <string name="source_voicerecognition">Voice Recognition</string>
     <string name="settings_audiosource">Audio Source</string>
+    <string name="notificationChannel_main_title">Main Channel</string>
+    <string name="notificationChannel_main_desc">whoBIRD Notifications</string>
+    <string name="notification_message_ready">whoBIRD is ready.</string>
+    <string name="notification_message_listening">whoBIRD is listening…</string>
+    <string name="notification_action_list">Recent</string>
+    <string name="notification_action_start">Start</string>
+    <string name="notification_action_stop">Stop</string>
+    <string name="notification_action_exit">Exit</string>
+
 </resources>

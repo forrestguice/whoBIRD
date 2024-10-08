@@ -45,6 +45,11 @@
             android:exported="false">
         </activity>
 
+        <service
+            android:name=".BirdService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
     </application>
 
 </manifest>
