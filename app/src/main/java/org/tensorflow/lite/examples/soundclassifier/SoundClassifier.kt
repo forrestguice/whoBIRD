@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 // Modifications by woheller69
+// Modifications by Forrest Guice
 
 package org.tensorflow.lite.examples.soundclassifier
 
@@ -62,11 +63,11 @@ import kotlin.math.sin
  */
 class SoundClassifier(
   context: Context,
-  binding: ActivityMainBinding,
+  binding: SoundClassifierUI,
   private val options: Options = Options()
 ) {
   internal var mContext: Context
-  internal var mBinding: ActivityMainBinding
+  internal var mBinding: SoundClassifierUI;
   private var database: BirdDBHelper? = null
   init {
     this.mContext = context.applicationContext
@@ -317,7 +318,7 @@ class SoundClassifier(
     lon = location.longitude.toFloat()
 
     Handler(Looper.getMainLooper()).post {
-      mBinding.gps.setText(mContext.getString(R.string.latitude)+": " + (round(lat*100.0)/100.0).toString() + " / " + mContext.getString(R.string.longitude) + ": " + (round(lon*100.0)/100).toString())
+      mBinding.setLocationText(lat, lon);
     }
 
     val weekMeta = cos(Math.toRadians(week * 7.5)) + 1.0
@@ -503,7 +504,7 @@ class SoundClassifier(
       outputBuffer.get(predictionProbs) // Copy data to predictionProbs.
 
       val probList = mutableListOf<Float>()
-      if (mBinding.checkIgnoreMeta.isChecked){
+      if (mBinding.ignoreMeta()){
         for (value in predictionProbs) {
           probList.add(1 / (1 + kotlin.math.exp(-value)))  //apply sigmoid
         }
@@ -513,14 +514,14 @@ class SoundClassifier(
         }
       }
 
-      if (mBinding.progressHorizontal.isIndeterminate){  //if start/stop button set to "running"
+      if (mBinding.isShowingProgress()){  //if start/stop button set to "running"
         probList.withIndex().also {
           val max = it.maxByOrNull { entry -> entry.value }
-          updateTextView(max, mBinding.text1)
+          updateTextView(max, true)
           updateImage(max)
           //after finding the maximum probability and its corresponding label (max), we filter out that entry from the list of entries before finding the second highest probability (secondMax)
           val secondMax = it.filterNot { entry -> entry == max }.maxByOrNull { entry -> entry.value }
-          updateTextView(secondMax,mBinding.text2)
+          updateTextView(secondMax, false)
         }
       }
 
@@ -530,77 +531,51 @@ class SoundClassifier(
   }
 
   private fun updateImage(max: IndexedValue<Float>?) {
-    if (mBinding.checkShowImages.isChecked) {
+    if (mBinding.showImages()) {
       Handler(Looper.getMainLooper()).post {
 
-        val url =
+         val url: String? =
           if (max!!.value > options.displayImageThreshold && assetList[max.index] != "NO_ASSET") {
             "https://macaulaylibrary.org/asset/" + assetList[max.index] + "/embed"
           } else {
-            mBinding.webview.url
+            mBinding.getImageURL()
           }
 
-        if (url == null || url == "about:blank") {
-          mBinding.webview.setVisibility(View.GONE)
-          mBinding.icon.setVisibility(View.VISIBLE)
-          mBinding.webviewUrl.setText("")
-          mBinding.webviewUrl.setVisibility(View.GONE)
-          mBinding.webviewName.setText("")
-          mBinding.webviewName.setVisibility(View.GONE)
-          mBinding.webviewLatinname.setText("")
-          mBinding.webviewLatinname.setVisibility(View.GONE)
-          mBinding.webviewReload.setVisibility(View.GONE)
-        } else {
-          if (mBinding.webview.url != url) {
-            mBinding.webview.setVisibility(View.INVISIBLE)
-            mBinding.webview.settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK)
-            mBinding.webview.loadUrl("javascript:document.open();document.close();")  //clear view
-            mBinding.webview.loadUrl(url)
-            mBinding.webviewUrl.setText(url)
-            mBinding.webviewUrl.setVisibility(View.VISIBLE)
-            mBinding.webviewName.setText(labelList[max.index].split("_").last())
-            mBinding.webviewLatinname.setText(labelList[max.index].split("_").first())
-            mBinding.webviewLatinname.setVisibility(View.VISIBLE)
-            mBinding.webviewName.setVisibility(View.VISIBLE)
-            mBinding.webviewReload.setVisibility(View.VISIBLE)
-            mBinding.icon.setVisibility(View.GONE)
-          }
-        }
+        val label = labelList[max.index].split("_").last()
+        mBinding.showImage(label, url);
       }
     } else {
       Handler(Looper.getMainLooper()).post {
-        mBinding.webview.setVisibility(View.GONE)
-        mBinding.icon.setVisibility(View.VISIBLE)
-        mBinding.webview.loadUrl("about:blank")
-        mBinding.webviewUrl.setText("")
-        mBinding.webviewUrl.setVisibility(View.GONE)
-        mBinding.webviewName.setText("")
-        mBinding.webviewName.setVisibility(View.GONE)
-        mBinding.webviewLatinname.setText("")
-        mBinding.webviewLatinname.setVisibility(View.GONE)
-        mBinding.webviewReload.setVisibility(View.GONE)
+        mBinding.hideImage()
       }
     }
   }
 
-  private fun updateTextView(element: IndexedValue<Float>?, tv: TextView) {
+  fun passesThreshold(value: Float) : Boolean {
     val sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext)
-    if (element != null && element.value > sharedPref.getInt("model_threshold", 30)/100.0) {
+    return value > sharedPref.getInt("model_threshold", 30)/100.0
+  }
+
+  private fun updateTextView(element: IndexedValue<Float>?, isPrimary: Boolean)
+  {
+    if (element != null && passesThreshold(element.value)) {
       val label =
         labelList[element.index].split("_").last()  //show in locale language
       Handler(Looper.getMainLooper()).post {
-        tv.setText(label + "  " + Math.round(element.value * 100.0) + "%")
-        if (element.value < 0.3) tv.setBackgroundResource(R.drawable.oval_holo_red_dark_dotted)
-        else if (element.value < 0.5) tv.setBackgroundResource(R.drawable.oval_holo_red_dark)
-        else if (element.value < 0.65) tv.setBackgroundResource(R.drawable.oval_holo_orange_dark)
-        else if (element.value < 0.8) tv.setBackgroundResource(R.drawable.oval_holo_orange_light)
-        else tv.setBackgroundResource(R.drawable.oval_holo_green_light)
+        if (isPrimary) {
+          mBinding.setPrimaryText(element.value, label);
+        } else {
+          mBinding.setSecondaryText(element.value, label)
+        }
         database?.addEntry(label, lat, lon, element.index, element.value)
       }
     } else {
       Handler(Looper.getMainLooper()).post {
-        tv.setText("")
-        tv.setBackgroundResource(0)
+        if (isPrimary) {
+          mBinding.setPrimaryText("");
+        } else {
+          mBinding.setSecondaryText("");
+        }
       }
     }
   }
@@ -618,6 +593,24 @@ class SoundClassifier(
     /** Number of nanoseconds in a millisecond  */
     private const val NANOS_IN_MILLIS = 1_000_000.toDouble()
   }
+
+  interface SoundClassifierUI
+  {
+    fun ignoreMeta(): Boolean
+    fun isShowingProgress(): Boolean
+
+    fun setLocationText(lat: Float, lon: Float)
+    fun setPrimaryText(text: String)
+    fun setPrimaryText(value: Float, label: String)
+    fun setSecondaryText(text: String)
+    fun setSecondaryText(value: Float, label: String)
+
+    fun showImages(): Boolean
+    fun getImageURL(): String?
+    fun showImage(label: String, url: String?)
+    fun hideImage()
+  }
+
 }
 
 

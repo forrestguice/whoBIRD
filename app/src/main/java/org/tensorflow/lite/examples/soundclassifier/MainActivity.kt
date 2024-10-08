@@ -31,11 +31,13 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebSettings
 import android.widget.CompoundButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import org.tensorflow.lite.examples.soundclassifier.databinding.ActivityMainBinding
+import kotlin.math.round
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     val paramsIcon: ViewGroup.LayoutParams = binding.icon.getLayoutParams() as ViewGroup.LayoutParams
     paramsIcon.height = (width / 1.8f).toInt()
 
-    soundClassifier = SoundClassifier(this, binding, SoundClassifier.Options())
+    soundClassifier = SoundClassifier(this, MainActivityUI(), SoundClassifier.Options())
     binding.gps.setText(getString(R.string.latitude)+": --.-- / " + getString(R.string.longitude) + ": --.--" )
     binding.webview.setWebViewClient(object : MlWebViewClient(this) {})
     binding.webview.settings.setDomStorageEnabled(true)
@@ -193,6 +195,100 @@ class MainActivity : AppCompatActivity() {
         return true
       }
       else -> return super.onOptionsItemSelected(item)
+    }
+  }
+
+  inner class MainActivityUI : SoundClassifier.SoundClassifierUI
+  {
+    override fun setLocationText(lat: Float, lon: Float) {
+      val text : String = getString(R.string.latitude)+": " + (round(SoundClassifier.lat *100.0) /100.0).toString() + " / " + getString(R.string.longitude) + ": " + (round(
+        SoundClassifier.lon *100.0) /100).toString()
+      binding.gps.setText(text)
+    }
+
+    override fun setPrimaryText(text: String) {
+      binding.text1.text = text;
+      binding.text1.setBackgroundResource(0)
+    }
+    override fun setPrimaryText(value: Float, label: String) {
+      updateTextView(value, label, binding.text1);
+    }
+
+    override fun setSecondaryText(text: String) {
+      binding.text2.text = text;
+      binding.text2.setBackgroundResource(0)
+    }
+    override fun setSecondaryText(value: Float, label: String) {
+      updateTextView(value, label, binding.text2);
+    }
+
+    override fun getImageURL(): String? {
+      return binding.webview.url
+    }
+
+    override fun ignoreMeta(): Boolean {
+      return binding.checkIgnoreMeta.isChecked
+    }
+
+    override fun showImages(): Boolean {
+      return binding.checkShowImages.isChecked
+    }
+
+    override fun isShowingProgress(): Boolean {
+      return binding.progressHorizontal.isIndeterminate;
+    }
+
+    private fun updateTextView(value: Float, label: String, tv: TextView)
+    {
+      tv.text = label + "  " + Math.round(value * 100.0) + "%"
+      if (value < 0.3) tv.setBackgroundResource(R.drawable.oval_holo_red_dark_dotted)
+      else if (value < 0.5) tv.setBackgroundResource(R.drawable.oval_holo_red_dark)
+      else if (value < 0.65) tv.setBackgroundResource(R.drawable.oval_holo_orange_dark)
+      else if (value < 0.8) tv.setBackgroundResource(R.drawable.oval_holo_orange_light)
+      else tv.setBackgroundResource(R.drawable.oval_holo_green_light)
+    }
+
+    override fun showImage(label: String, url: String?) {
+      if (url == null || url == "about:blank") {
+        binding.webview.setVisibility(View.GONE)
+        binding.icon.setVisibility(View.VISIBLE)
+        binding.webviewUrl.setText("")
+        binding.webviewUrl.setVisibility(View.GONE)
+        binding.webviewName.setText("")
+        binding.webviewName.setVisibility(View.GONE)
+        binding.webviewLatinname.setText("")
+        binding.webviewLatinname.setVisibility(View.GONE)
+        binding.webviewReload.setVisibility(View.GONE)
+      } else {
+        if (binding.webview.url != url) {
+          binding.webview.setVisibility(View.INVISIBLE)
+          binding.webview.settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK)
+          binding.webview.loadUrl("javascript:document.open();document.close();")  //clear view
+          binding.webview.loadUrl(url)
+          binding.webviewUrl.setText(url)
+          binding.webviewUrl.setVisibility(View.VISIBLE)
+          binding.webviewName.setText(label)
+          binding.webviewLatinname.setText(label)
+          binding.webviewLatinname.setVisibility(View.VISIBLE)
+          binding.webviewName.setVisibility(View.VISIBLE)
+          binding.webviewReload.setVisibility(View.VISIBLE)
+          binding.icon.setVisibility(View.GONE)
+        }
+      }
+    }
+
+    override fun hideImage()
+    {
+      binding.webview.setVisibility(View.GONE)
+      binding.icon.setVisibility(View.VISIBLE)
+      binding.webview.loadUrl("about:blank")
+      binding.webviewUrl.setText("")
+      binding.webviewUrl.setVisibility(View.GONE)
+      binding.webviewName.setText("")
+      binding.webviewName.setVisibility(View.GONE)
+      binding.webviewLatinname.setText("")
+      binding.webviewLatinname.setVisibility(View.GONE)
+      binding.webviewReload.setVisibility(View.GONE)
     }
   }
 
