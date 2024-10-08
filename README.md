@@ -1,12 +1,15 @@
 **ATTENTION: This is a modified version of [whoBIRD](https://github.com/woheller69/whoBIRD).**
+
 [https://github.com/woheller69/whoBIRD](https://github.com/woheller69/whoBIRD)
 
 This soft-fork was created for personal use; it does not provide tagged releases or user support.
+
 Please refer to the upstream project.
 
 ## Legal Stuff
 
 whoBIRD is licensed under GPLv3, © woheller69
+
 This forked version contains modifications © Forrest Guice.
 
 - This app is built on the [BirdNET framework](https://github.com/kahst/BirdNET-Analyzer) by [**@kahst**](https://github.com/kahst), published under CC BY NC SA 4.0 license
@@ -17,4 +20,4 @@ This forked version contains modifications © Forrest Guice.
 - It uses iirj (https://github.com/berndporr/iirj) which is licensed under Apache License Version 2.0
 
 ## Changes
-* adds an option to run **whoBIRD** as a foreground service, allowing it to listen for birds while other apps are in use.
+* adds an option to run **whoBIRD** as a foreground service. This allows it to listen for birds while other apps are in use.
