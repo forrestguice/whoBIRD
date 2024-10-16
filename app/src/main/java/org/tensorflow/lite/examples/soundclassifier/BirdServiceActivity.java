@@ -55,7 +55,7 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 /**
- * This activity binds to the BirdService when started.
+ * This activity binds to the BirdService when created.
  */
 public class BirdServiceActivity extends AppCompatActivity
 {
@@ -72,6 +72,14 @@ public class BirdServiceActivity extends AppCompatActivity
         setContentView(binding.getRoot());
         initViews();
         requestPermissions();
+        bindToService();
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        unbindFromService();
+        super.onDestroy();
     }
 
     protected final ServiceConnection serviceConnection = new ServiceConnection()
@@ -107,24 +115,29 @@ public class BirdServiceActivity extends AppCompatActivity
         public void onStateChanged(boolean isActive) {
             updateViews();
         }
+
+        @Override
+        public void onExit() {
+            binding.fab.post(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            });
+        }
     };
 
-    @Override
-    protected void onStart()
+    protected void bindToService()
     {
-        super.onStart();
         startForegroundService(new Intent(this, BirdService.class));
         bindService( new Intent(this, BirdService.class),
                 serviceConnection, Context.BIND_AUTO_CREATE );
     }
-
-    @Override
-    protected void onStop()
+    protected void unbindFromService()
     {
         birdService.removeServiceListener(serviceListener);
         unbindService(serviceConnection);
         boundToService = false;
-        super.onStop();
     }
 
     @Override

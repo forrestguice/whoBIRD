@@ -47,7 +47,8 @@
 
         <activity
             android:name=".BirdServiceActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop" />
 
         <service
             android:name=".BirdService"

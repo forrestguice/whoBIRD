@@ -168,6 +168,7 @@ public class BirdService extends Service
     {
         SoundClassifier.SoundClassifierUI getUI();
         void onStateChanged(boolean isActive);
+        void onExit();
     }
 
     private final ArrayList<BirdServiceListener> serviceListeners = new ArrayList<>();
@@ -181,6 +182,11 @@ public class BirdService extends Service
     protected void signalStateChanged(boolean value) {
         for (BirdServiceListener listener : serviceListeners) {
             listener.onStateChanged(value);
+        }
+    }
+    protected void signalOnExit() {
+        for (BirdServiceListener listener : serviceListeners) {
+            listener.onExit();
         }
     }
 
@@ -215,6 +221,7 @@ public class BirdService extends Service
     public void exitService()
     {
         stopRecording();
+        signalOnExit();
         stopForeground(true);
         stopSelf();
     }
