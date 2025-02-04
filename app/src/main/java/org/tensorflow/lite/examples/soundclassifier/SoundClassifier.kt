@@ -147,6 +147,7 @@ class SoundClassifier(
 
   /** Buffer that holds audio PCM sample that are fed to the TFLite model for inference.  */
   private lateinit var inputBuffer: FloatBuffer
+  private lateinit var wavWriterBuffer: FloatBuffer
   private lateinit var metaInputBuffer: FloatBuffer
 
   init {
@@ -517,6 +518,7 @@ class SoundClassifier(
       interpreter.run(inputBuffer, outputBuffer)
       outputBuffer.rewind()
       outputBuffer.get(predictionProbs) // Copy data to predictionProbs.
+      wavWriterBuffer = inputBuffer.duplicate();
 
       val probList = mutableListOf<Float>()
       if (mBinding.ignoreMeta()){
@@ -532,11 +534,12 @@ class SoundClassifier(
       if (mBinding.isShowingProgress()){  //if start/stop button set to "running"
         probList.withIndex().also {
           val max = it.maxByOrNull { entry -> entry.value }
-          updateTextView(max, true)
+          val timeInMillis = System.currentTimeMillis()
+          updateTextView(max, true, timeInMillis)
           updateImage(max)
           //after finding the maximum probability and its corresponding label (max), we filter out that entry from the list of entries before finding the second highest probability (secondMax)
           val secondMax = it.filterNot { entry -> entry == max }.maxByOrNull { entry -> entry.value }
-          updateTextView(secondMax, false)
+          updateTextView(secondMax, false, timeInMillis)
         }
       }
 
@@ -571,8 +574,9 @@ class SoundClassifier(
     return value > sharedPref.getInt("model_threshold", 30)/100.0
   }
 
-  private fun updateTextView(element: IndexedValue<Float>?, isPrimary: Boolean)
+  private fun updateTextView(element: IndexedValue<Float>?, isPrimary: Boolean, timeInMillis: Long)
   {
+    val sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext)
     if (element != null && passesThreshold(element.value)) {
       val label =
         labelList[element.index].split("_").last()  //show in locale language
@@ -582,7 +586,9 @@ class SoundClassifier(
         } else {
           mBinding.setSecondaryText(element.value, label)
         }
-        database?.addEntry(label, lat, lon, element.index, element.value)
+        database?.addEntry(label, lat, lon, element.index, element.value, timeInMillis)
+        if (sharedPref.getBoolean("write_wav",false)) WavUtils.createWaveFile(timeInMillis, wavWriterBuffer, options.sampleRate,1,2)
+        if (sharedPref.getBoolean("play_sound",false)) PlayNotification.playSound(mContext);
       }
     } else {
       Handler(Looper.getMainLooper()).post {
@@ -627,6 +633,3 @@ class SoundClassifier(
   }
 
 }
-
-
-

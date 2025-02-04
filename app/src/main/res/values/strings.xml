@@ -23,6 +23,11 @@
     <string name="source_microphone">Microphone</string>
     <string name="source_voicerecognition">Voice Recognition</string>
     <string name="settings_audiosource">Audio Source</string>
+    <string name="settings_notification_sound">Notification sound</string>
+    <string name="save_wav">Save .wav files</string>
+    <string name="summary_save_wav">Saves a .wav file for each detection in Music directory. Requires Android 12+</string>
+
+
     <string name="settings_background">Run in the background</string>
     <string name="notificationChannel_main_title">Main Channel</string>
     <string name="notificationChannel_main_desc">whoBIRD Notifications</string>

@@ -34,4 +34,17 @@
     app:showSeekBarValue="true"
     />
 
+<SwitchPreferenceCompat
+    android:title="@string/settings_notification_sound"
+    android:key="play_sound"
+    android:defaultValue="false"
+    />
+
+<SwitchPreferenceCompat
+    android:title="@string/save_wav"
+    android:summary="@string/summary_save_wav"
+    android:key="write_wav"
+    android:defaultValue="false"
+    />
+
 </PreferenceScreen>
