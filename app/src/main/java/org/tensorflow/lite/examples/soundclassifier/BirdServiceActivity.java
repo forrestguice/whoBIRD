@@ -107,7 +107,7 @@ public class BirdServiceActivity extends AppCompatActivity
     private final BirdService.BirdServiceListener serviceListener = new BirdService.BirdServiceListener()
     {
         @Override
-        public SoundClassifier.SoundClassifierUI getUI() {
+        public SoundClassifierUI getUI() {
             return activityUI;
         }
 
@@ -210,7 +210,7 @@ public class BirdServiceActivity extends AppCompatActivity
         }
     }
 
-    private final SoundClassifier.SoundClassifierUI activityUI = new SoundClassifier.SoundClassifierUI()
+    private final SoundClassifierUI activityUI = new SoundClassifierUI()
     {
         @Override
         public boolean ignoreMeta() {

@@ -166,7 +166,7 @@ public class BirdService extends Service
      */
     public interface BirdServiceListener
     {
-        SoundClassifier.SoundClassifierUI getUI();
+        SoundClassifierUI getUI();
         void onStateChanged(boolean isActive);
         void onExit();
     }
@@ -226,7 +226,7 @@ public class BirdService extends Service
         stopSelf();
     }
 
-    private final SoundClassifier.SoundClassifierUI ui = new SoundClassifier.SoundClassifierUI()
+    private final SoundClassifierUI ui = new SoundClassifierUI()
     {
         @Override
         public boolean isShowingProgress() {
