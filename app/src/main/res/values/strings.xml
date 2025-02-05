@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name" translatable="false">whoBIRD</string>
+    <string name="app_name" translatable="false">whoBIRD ssp. FGS</string>
     <string name="samples_zero">No audio input: All audio samples are zero!</string>
     <string name="ignore_gps_date">Ignore location and date</string>
     <string name="latitude">Lat</string>
     <string name="longitude">Lon</string>
     <string name="dialog_Later_button">Maybe later</string>
-    <string name="dialog_StarOnGitHub">Do you like this app? Please give a star on GitHub or buy the developer a coffee via PayPal.</string>
+    <string name="dialog_StarOnGitHub">Do you like this app? Please give a star on GitHub or buy the upstream developer a coffee via PayPal.</string>
     <string name="download_model">Download Model</string>
     <string name="download_model_text">whoBIRD needs to download the BirdNET model (~ 30MB). \n No commercial use allowed \n(CC-BY-NC-SA 4.0 license)</string>
     <string name="start">LET\'S GO</string>
@@ -27,7 +27,7 @@
     <string name="save_wav">Save .wav files</string>
     <string name="summary_save_wav">Saves a .wav file for each detection in Music directory. Requires Android 12+</string>
 
-
+    <string name="app_desc">A subspecies of whoBIRD that runs as a foreground service.</string>
     <string name="settings_background">Run in the background</string>
     <string name="notificationChannel_main_title">Main Channel</string>
     <string name="notificationChannel_main_desc">whoBIRD Notifications</string>

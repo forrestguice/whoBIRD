@@ -7,11 +7,11 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "org.woheller69.whobird"
+        applicationId "org.woheller69.whobird.ssp.fgs"
         minSdk 26
         targetSdk 34
-        versionCode 38
-        versionName "3.8"
+        versionCode 3801
+        versionName "3.8.0.1"
     }
 
     aaptOptions {
